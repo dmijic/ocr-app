@@ -12,7 +12,7 @@ const storage = multer.diskStorage({
         cb(null, "./uploads")
     },
     filename: (req, file, cb) => {
-        cb(null, file.originalname)
+        cb(null, file.originalname);
     }
 });
 
@@ -26,6 +26,18 @@ app.get('/', (req, res) => {
 
 app.post('/upload', (req, res) => {
     upload(req, res, err => {
+        fs.readFile(`./uploads/${req.file.originalname}`, (err, data) => {
+            if (err) return console.log('This is your error', err);
+            (async () => {
+                await worker.load();
+                await worker.loadLanguage('eng');
+                await worker.initialize('eng');
+                const { data: { text } } = await worker.recognize(data);
+                res.send(text);
+                console.log(text);
+                await worker.terminate();
+            })();
+        });
         console.log(req.file);
     })
 });
