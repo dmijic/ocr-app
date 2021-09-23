@@ -34,11 +34,9 @@ app.post('/upload', (req, res) => {
                 await worker.initialize('eng');
                 const { data: { text } } = await worker.recognize(data);
                 res.send(text);
-                console.log(text);
                 await worker.terminate();
             })();
         });
-        console.log(req.file);
     })
 });
 
